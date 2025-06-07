@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Сэтгэлийн Захиа</title>
+<style>
+  body {
+    background: #ffe6f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+  }
+  .container {
+    background: white;
+    border-radius: 15px;
+    padding: 30px 40px;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(255, 0, 85, 0.3);
+    position: relative;
+  }
+  #letterText {
+    font-size: 1.3rem;
+    color: #b3004c;
+    margin-bottom: 30px;
+  }
+  #nextBtn {
+    background: #ff4d94;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #nextBtn:hover {
+    background: #e60073;
+  }
+  #heartText {
+    font-size: 1.2rem;
+    color: #b3004c;
+    margin-bottom: 10px;
+    display: none;
+    font-weight: 700;
+  }
+  #heart {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+    fill: #e60073;
+    cursor: pointer;
+    display: none;
+    transition: transform 0.4s ease;
+  }
+  /* Томрох, дэлбэрэх */
+  .heart-expand {
+    animation: heartExpand 0.6s forwards;
+  }
+  .heart-explode {
+    animation: heartExplode 0.8s forwards;
+  }
+  @keyframes heartExpand {
+    to { transform: scale(3); opacity: 0; }
+  }
+  @keyframes heartExplode {
+    to { opacity: 0; transform: scale(0); }
+  }
+  /* Жижиг зүрхэн бороо */
+  #smallHeartsContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160px;
+    height: 160px;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    overflow: visible;
+  }
+  .small-heart {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    fill: #e60073;
+    animation-name: fall;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+    opacity: 0.9;
+  }
+  @keyframes fall {
+    to {
+      transform: translateY(150px) scale(0.5);
+      opacity: 0;
+    }
+  }
+  /* Шүлэг */
+  #poem {
+    margin-top: 30px;
+    font-size: 1.1rem;
+    color: #660033;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 5s ease, opacity 2s ease;
+    white-space: pre-wrap;
+  }
+  #poem.visible {
+    max-height: 400px;
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div id="letterText">энийг уншиж байгаа бол чи минь дөнгөж сая сэрээд магадгүй нойрмог байгаа байх. 2 уулаа энэ хайраа аль болох нандин байлгаж үүрд ийм жоохноороо байхыг хичээнээ магадгүй хэн хэн нь эннээс хойш ийм сайхан мэдрэмжийг хэнээс ч авж чадхгүй болохоор одоо нэгэнт бид 2 т ухрах зам үгүй болсон болохоор хэн хэнийхээ суулийн зогсоол байя чамдаа хайртай шүү үнсье :* <3</div>
+    <button id="nextBtn">Next</button>
+
+    <div id="heartText">Зүрхэн дээр дар</div>
+    <svg id="heart" viewBox="0 0 24 24">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+      2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 
+      14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 
+      11.54L12 21.35z"/>
+    </svg>
+
+    <div id="smallHeartsContainer"></div>
+
+    <div id="poem"></div>
+  </div>
+
+<script>
+  const letterText = document.getElementById('letterText');
+  const nextBtn = document.getElementById('nextBtn');
+  const heartText = document.getElementById('heartText');
+  const heart = document.getElementById('heart');
+  const smallHeartsContainer = document.getElementById('smallHeartsContainer');
+  const poem = document.getElementById('poem');
+
+  const poemText = `Longing
+
+I’m being told not to go, but there’s a road I wish to take.
+While being told not to meet, there’s someone I wish to meet.
+If you tell me not to, it makes me want to do it even more.
+
+That’s life and longing.
+It’s you.`;
+
+  nextBtn.addEventListener('click', () => {
+    nextBtn.style.display = 'none';
+    letterText.style.display = 'none';
+
+    heartText.style.display = 'block';
+    heart.style.display = 'block';
+  });
+
+  heart.addEventListener('click', () => {
+    heartText.style.display = 'none';
+
+    // Зүрхэн томрох анимаци эхлэх
+    heart.classList.add('heart-expand');
+
+    heart.addEventListener('animationend', () => {
+      if (heart.classList.contains('heart-expand')) {
+        heart.classList.remove('heart-expand');
+        heart.classList.add('heart-explode');
+
+        // Жижиг зүрхэн бороо үүсгэх
+        createSmallHearts(25);
+
+        // 3 секундийн дараа жижиг зүрхэнүүдийг арилгаж, шүлэг гаргах
+        setTimeout(() => {
+          smallHeartsContainer.innerHTML = '';
+          heart.style.display = 'none';
+
+          poem.textContent = poemText;
+          poem.classList.add('visible');
+        }, 3000);
+      }
+    }, { once: true });
+  });
+
+  function createSmallHearts(count) {
+    for(let i = 0; i < count; i++) {
+      const svgNS = "http://www.w3.org/2000/svg";
+      const smallHeart = document.createElementNS(svgNS, "svg");
+      smallHeart.setAttribute("viewBox", "0 0 24 24");
+      smallHeart.setAttribute("class", "small-heart");
+
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 \
+      2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 \
+      14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 \
+      11.54L12 21.35z");
+      smallHeart.appendChild(path);
+
+      // Санамсаргүй байрлал, хугацаа
+      smallHeart.style.left = `${Math.random() * 140}px`;
+      smallHeart.style.top = `${Math.random() * 140}px`;
+      smallHeart.style.animationDuration = `${1 + Math.random() * 1}s`;
+      smallHeart.style.animationDelay = `${Math.random() * 1}s`;
+
+      smallHeartsContainer.appendChild(smallHeart);
+
+      smallHeart.addEventListener('animationend', () => {
+        smallHeart.remove();
+      });
+    }
+  }
+</script>
+</body>
+</html>
